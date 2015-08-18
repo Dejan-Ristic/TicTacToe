@@ -10,9 +10,9 @@ function BotStart(){
     var games_played = 0;
     var move_number = 0;
     var real_table = [];
-    var trans_table = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]];
     var transformation_type = null;
-    var first_field;
+    var first_field_bot;
+    var first_field_opp;
 
     var transform = {
         "00": "no_transform",
@@ -106,8 +106,6 @@ function BotStart(){
             my_symbol = sess_obj[my_player]['symbol'];
             transformation_type = null;
             move_number = 0;
-            real_table = [];
-            trans_table = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]];
             this.pingSession();
 
             //***********************************************************************************
@@ -120,25 +118,18 @@ function BotStart(){
         }
     };
 
-
-
-
-
-    this.setTransformationType = function(y,x){
-        var string = y.toString()+ x.toString();
-        transformation_type = transform[string];
+    this.setTransformationType = function(coords){
+        transformation_type = transform[coords];
+    };
+    this.transformToTransTable = function(coords) {
+        var index = transform_methods[transformation_type]['real_table'].indexOf(coords);
+        return transform_methods[transformation_type]['trans_table'][index];
+    };
+    this.transformToRealTable = function(coords) {
+        var index = transform_methods[transformation_type]['trans_table'].indexOf(coords);
+        return transform_methods[transformation_type]['real_table'][index];
     };
 
-    this.transformToTransTable = function(){
-        var coords_real;
-        var coords_trans;
-        for(i=0; i<9; i++){
-            coords_real = transform_methods[transformation_type]['real_table'][i];
-            coords_trans = transform_methods[transformation_type]['trans_table'][i];
-            trans_table[coords_trans.split("")[0]][coords_trans.split("")[1]] =
-            real_table[coords_real.split("")[0]][coords_real.split("")[1]];
-        }
-    };
 
 
     this.playAsX = function(){
@@ -147,17 +138,80 @@ function BotStart(){
         if (is_human) return;
         //***********************************************************************************
 
-        if(move_number === 1){
-            var y_play = (Math.floor(Math.random()*3)).toString();
-            var x_play = (Math.floor(Math.random()*3)).toString();
-            this.setTransformationType(y_play, x_play);
-            this.playMove(y_play, x_play);
-        }
-        if(move_number === 2){
-            this.transformToTransTable();
-
+        switch (move_number){
+            case 1:
+                var y_play = (Math.floor(Math.random()*3)).toString();
+                var x_play = (Math.floor(Math.random()*3)).toString();
+                this.setTransformationType(y_play+x_play);
+                first_field_bot = this.transformToTransTable(y_play+x_play);
+                this.playMove(y_play+x_play);
+                break;
+            case 2:
+                for(y=0; y<3; y++){
+                    for(x=0; x<3; x++){
+                        if (real_table[y][x] === "o"){
+                            first_field_opp = this.transformToTransTable(y.toString()+x.toString());
+                        }
+                    }
+                }
+                switch (first_field_bot){
+                    case "00":
+                        switch (first_field_opp){
+                            case "02":
+                            case "01":
+                            case "21":
+                                this.playMove(this.transformToRealTable("20"));
+                                break;
+                            case "20":
+                            case "10":
+                            case "12":
+                                this.playMove(this.transformToRealTable("02"));
+                                break;
+                            case "22":
+                                var ar_1 = ["02", "20"];
+                                this.playMove(this.transformToRealTable(ar_1[Math.floor(Math.random()*ar_1.length)]));
+                                break;
+                            case "11":
+                                var ar_2 = ["01", "02", "10", "12", "20", "21", "22"];
+                                this.playMove(this.transformToRealTable(ar_2[Math.floor(Math.random()*ar_2.length)]));
+                                break;
+                            default:
+                                console.log("Something went very wrong.");
+                        }
+                        break;
+                    case "01":
+                        break;
+                    case "11":
+                        switch (first_field_opp){
+                            case "01":
+                            case "12":
+                            case "21":
+                            case "10":
+                                var obj = {
+                                    "01": ["22", "20"],
+                                    "12": ["20", "00"],
+                                    "21": ["00", "02"],
+                                    "10": ["02", "22"]
+                                };
+                                this.playMove(this.transformToRealTable(obj[first_field_opp][Math.floor(Math.random()*2)]));
+                        }
+                        break;
+                    default:
+                        console.log("Something went very wrong.");
+                }
+                break;
+            case 3:
+            case 4:
+            case 5:
+                this.autoPlayMove();
+                break;
+            default:
+                console.log("Something went very wrong.");
         }
     };
+
+
+
 
     this.playAsO = function(){
 
@@ -167,7 +221,13 @@ function BotStart(){
 
     };
 
-    this.playMove = function(y, x){
+    this.autoPlayMove = function(){
+        console_log("FUCK YEAH!");
+    };
+
+    this.playMove = function(coords){
+        var y = coords[0];
+        var x = coords[1];
         ApiCalls.playMove(y, x);
 
         //***********************************************************************************
@@ -175,8 +235,6 @@ function BotStart(){
         //***********************************************************************************
 
     };
-
-
 }
 
 BotStart.init = function(sess_init, is_human, ses_id){

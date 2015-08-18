@@ -40,8 +40,7 @@ $(".field").on("click", function(){
     if($(this).text() === "-") {
         var y = $(this).attr("id").split("")[0];
         var x = $(this).attr("id").split("")[2];
-        bot.playMove(y, x);
-
+        bot.playMove(y+x);
     }
 });
 
