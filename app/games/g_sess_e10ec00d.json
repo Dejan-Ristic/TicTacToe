@@ -1,0 +1,1 @@
+{"play_against_machine": false, "current_game": {"winner": "-", "fields": [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]], "next_symbol": "x", "player_2": null, "player_1": {"id": "0cda52d9", "name": "asdf", "symbol": "x", "wins": 0}}, "player_2": null, "draw": 0, "player_1": {"id": "0cda52d9", "name": "asdf", "symbol": "x", "wins": 0}, "id": "e10ec00d", "games": []}

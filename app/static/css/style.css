@@ -1,0 +1,159 @@
+/* line 4, ../sass/style.sass */
+body {
+  background: darkgray;
+  box-sizing: border-box;
+  margin: 0;
+  font-family: "Consolas", "Deja Vu Sans Mono", "Bitstream Vera Sans Mono", monospace; }
+
+/* line 9, ../sass/style.sass */
+h1 {
+  margin: 0 0 15px 0;
+  font-size: 42px;
+  text-align: center;
+  border-bottom: 5px solid black; }
+
+/* line 14, ../sass/style.sass */
+h2 {
+  display: inline-block;
+  width: 49%;
+  margin: 0;
+  font-size: 34px;
+  font-weight: bold;
+  color: gray;
+  text-align: center; }
+
+/* line 23, ../sass/style.sass */
+.left-side {
+  float: left; }
+  /* line 25, ../sass/style.sass */
+  .left-side .table {
+    box-sizing: content-box;
+    width: 750px;
+    height: 750px;
+    background: gray;
+    margin: 50px 0 0 50px;
+    border-right: 5px solid black;
+    border-bottom: 5px solid black; }
+    /* line 33, ../sass/style.sass */
+    .left-side .table .field {
+      box-sizing: border-box;
+      float: left;
+      width: 250px;
+      height: 250px;
+      border-top: 5px solid black;
+      border-left: 5px solid black;
+      font-size: 190px;
+      text-align: center; }
+      /* line 42, ../sass/style.sass */
+      .left-side .table .field:hover {
+        background: darkgray;
+        cursor: pointer; }
+  /* line 45, ../sass/style.sass */
+  .left-side .game-data {
+    margin: 100px 0 0 50px; }
+    /* line 47, ../sass/style.sass */
+    .left-side .game-data .entered-data {
+      position: relative;
+      margin-top: 100px; }
+      /* line 50, ../sass/style.sass */
+      .left-side .game-data .entered-data .button {
+        display: inline-block;
+        width: 280px;
+        height: 60px;
+        background: gray;
+        margin: 0;
+        padding: 0;
+        outline: 0;
+        border: 5px solid black;
+        font-family: "Consolas", "Deja Vu Sans Mono", "Bitstream Vera Sans Mono", monospace;
+        font-size: 34px;
+        text-align: center; }
+        /* line 62, ../sass/style.sass */
+        .left-side .game-data .entered-data .button:hover {
+          background: darkgray;
+          cursor: pointer; }
+      /* line 65, ../sass/style.sass */
+      .left-side .game-data .entered-data input[type="text"] {
+        display: inline-block;
+        width: 444px;
+        height: 50px;
+        background: gray;
+        margin: 0;
+        padding: 0 5px;
+        outline: 0;
+        border: 5px solid black;
+        font-family: "Consolas", "Deja Vu Sans Mono", "Bitstream Vera Sans Mono", monospace;
+        font-size: 34px; }
+        /* line 76, ../sass/style.sass */
+        .left-side .game-data .entered-data input[type="text"].input-player-2-name {
+          float: right;
+          margin-top: 10px; }
+      /* line 79, ../sass/style.sass */
+      .left-side .game-data .entered-data input[type="checkbox"] {
+        position: absolute;
+        left: 290px;
+        height: 30px;
+        width: 30px;
+        outline: 0; }
+        /* line 85, ../sass/style.sass */
+        .left-side .game-data .entered-data input[type="checkbox"].check_1 {
+          top: 65px; }
+        /* line 87, ../sass/style.sass */
+        .left-side .game-data .entered-data input[type="checkbox"].check_2 {
+          top: 132px; }
+      /* line 89, ../sass/style.sass */
+      .left-side .game-data .entered-data label {
+        position: absolute;
+        left: 330px;
+        font-size: 25px;
+        font-weight: bold; }
+        /* line 94, ../sass/style.sass */
+        .left-side .game-data .entered-data label.label_1 {
+          top: 68px; }
+        /* line 96, ../sass/style.sass */
+        .left-side .game-data .entered-data label.label_2 {
+          top: 135px; }
+    /* line 98, ../sass/style.sass */
+    .left-side .game-data .data-to-display {
+      width: 750px;
+      display: none;
+      border-bottom: 5px solid black;
+      margin-bottom: 30px;
+      padding-bottom: 30px; }
+      /* line 104, ../sass/style.sass */
+      .left-side .game-data .data-to-display .data {
+        display: inline-block;
+        width: 49%;
+        height: 40px;
+        margin: 0;
+        font-size: 34px;
+        font-weight: bold;
+        text-align: center; }
+    /* line 112, ../sass/style.sass */
+    .left-side .game-data .results {
+      margin-top: 30px;
+      display: none; }
+      /* line 115, ../sass/style.sass */
+      .left-side .game-data .results .games-total {
+        height: 40px;
+        margin: 0 0 30px 0;
+        font-size: 34px;
+        font-weight: bold;
+        text-align: center;
+        border-bottom: 5px solid black;
+        padding-bottom: 30px; }
+      /* line 123, ../sass/style.sass */
+      .left-side .game-data .results .res_h2 {
+        width: 31%;
+        text-align: center; }
+      /* line 126, ../sass/style.sass */
+      .left-side .game-data .results .result {
+        width: 31%;
+        display: inline-block;
+        height: 40px;
+        margin: 0;
+        font-size: 34px;
+        font-weight: bold;
+        text-align: center; }
+
+/*# sourceMappingURL=style.css.map */
