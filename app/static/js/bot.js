@@ -7,6 +7,7 @@ function BotStart(){
     var my_player;
 
     var my_symbol;
+    var opp_symbol;
     var games_played = 0;
     var move_number = 0;
     var real_table = [];
@@ -44,6 +45,17 @@ function BotStart(){
             "trans_table": ["02", "12", "22", "01", "11", "21", "00", "10", "20"]}
     };
 
+    var win_sets = [
+        ["00", "01", "02"],
+        ["10", "11", "12"],
+        ["20", "21", "22"],
+        ["00", "10", "20"],
+        ["01", "11", "21"],
+        ["02", "12", "22"],
+        ["00", "11", "22"],
+        ["02", "11", "20"]
+    ];
+
     this.set_session_id = function(ses_id){
         session_id = ses_id;
         return session_id;
@@ -74,6 +86,7 @@ function BotStart(){
             clearInterval(intervalWaitBothPlayers);
             my_player = (sess_obj['player_1']['id'] === player_id) ? 'player_1' : 'player_2';
             my_symbol = sess_obj[my_player]['symbol'];
+            opp_symbol = (my_player === 'player_1') ? sess_obj['player_2']['symbol'] : sess_obj['player_1']['symbol'];
             this.pingSession();
 
             //***********************************************************************************
@@ -147,10 +160,12 @@ function BotStart(){
                 this.playMove(y_play+x_play);
                 break;
             case 2:
+                loop_1:
                 for(y=0; y<3; y++){
                     for(x=0; x<3; x++){
                         if (real_table[y][x] === "o"){
                             first_field_opp = this.transformToTransTable(y.toString()+x.toString());
+                            break loop_1;
                         }
                     }
                 }
@@ -180,6 +195,29 @@ function BotStart(){
                         }
                         break;
                     case "01":
+                        switch (first_field_opp){
+                            case "22":
+                            case "12":
+                                this.playMove(this.transformToRealTable("02"));
+                                break;
+                            case "20":
+                            case "10":
+                                this.playMove(this.transformToRealTable("00"));
+                                break;
+                            case "21":
+                                var obj_3 = ["00", "02", "10", "11", "12", "20", "22"];
+                                this.playMove(this.transformToRealTable(obj_3[Math.floor(Math.random()*7)]));
+                                break;
+                            case "00":
+                            case "02":
+                            case "11":
+                                var obj_4 = ["00", "02", "10", "11", "12", "20", "22"];
+                                obj_4.splice((obj_4.indexOf(first_field_opp)), 1);
+                                this.playMove(this.transformToRealTable(obj_4[Math.floor(Math.random()*6)]));
+                                break;
+                            default:
+                                console.log("Something went very wrong.");
+                        }
                         break;
                     case "11":
                         switch (first_field_opp){
@@ -187,13 +225,24 @@ function BotStart(){
                             case "12":
                             case "21":
                             case "10":
-                                var obj = {
+                                var obj_1 = {
                                     "01": ["22", "20"],
                                     "12": ["20", "00"],
                                     "21": ["00", "02"],
                                     "10": ["02", "22"]
                                 };
-                                this.playMove(this.transformToRealTable(obj[first_field_opp][Math.floor(Math.random()*2)]));
+                                this.playMove(this.transformToRealTable(obj_1[first_field_opp][Math.floor(Math.random()*2)]));
+                                break;
+                            case "00":
+                            case "02":
+                            case "20":
+                            case "22":
+                                var obj_2 = ["00", "01", "02", "10", "12", "20", "21", "22"];
+                                obj_2.splice((obj_2.indexOf(first_field_opp)), 1);
+                                this.playMove(this.transformToRealTable(obj_2[Math.floor(Math.random()*7)]));
+                                break;
+                            default:
+                                console.log("Something went very wrong.");
                         }
                         break;
                     default:
@@ -211,19 +260,98 @@ function BotStart(){
     };
 
 
-
-
     this.playAsO = function(){
-
+        console_log("NOW I AM O !!!!");
         //***********************************************************************************
         if (is_human) return;
         //***********************************************************************************
 
+        console_log("nothing to do");
     };
 
     this.autoPlayMove = function(){
-        console_log("FUCK YEAH!");
+        function goThroughSetsLinear(symbol) {
+            var symbol_count = 0;
+            var empty_count = 0;
+            var empty_coords = null;
+            loop_2:
+            for (i = 0; i < win_sets.length; i++) {
+                for (j = 0; j < win_sets[i].length; j++) {
+                    switch (real_table[win_sets[i][j][0] ] [win_sets[i][j][1] ]){
+                        case symbol:
+                            symbol_count += 1;
+                            break;
+                        case "-":
+                            empty_count += 1;
+                            empty_coords = win_sets[i][j];
+                            break;
+                        default:
+                            break;
+                    }
+                    if(j === (win_sets[i].length - 1)){
+                        if (symbol_count === 2 && empty_count ===1){
+                            break loop_2;
+                        }
+                        symbol_count = 0;
+                        empty_count = 0;
+                        empty_coords = null;
+                    }
+                }
+            }
+            return empty_coords;
+        }
+
+        function goThroughSetsCombo(symbol){
+            var symbol_count = 0;
+            var empty_count = 0;
+            var empty_coords_list = [];
+            var empty_coords = null;
+            for (i = 0; i < win_sets.length; i++) {
+                for (j = 0; j < win_sets[i].length; j++) {
+                    switch (real_table[win_sets[i][j][0] ] [win_sets[i][j][1] ]){
+                        case symbol:
+                            symbol_count += 1;
+                            break;
+                        case "-":
+                            empty_count += 1;
+                            empty_coords_list.push(win_sets[i][j]);
+                            console_log(empty_coords_list);
+                            break;
+                        default:
+                            break;
+                    }
+                    if(j === (win_sets[i].length - 1)) {
+                        if (!(symbol_count === 1 && empty_count === 2)) {
+                            for (count=0; count<empty_count; count++){
+                                empty_coords_list.pop();
+                            }
+                        }
+                        symbol_count = 0;
+                        empty_count = 0;
+                    }
+                }
+            }
+            for (count=0; count<empty_coords_list.length; count++){
+                for (inner_count=count+1; inner_count<empty_coords_list.length; inner_count++){
+                    if (empty_coords_list[count] === empty_coords_list[inner_count]){
+                        return empty_coords = empty_coords_list[count];}}}}
+
+        var my_finish_move = goThroughSetsLinear(my_symbol);
+        var opp_finish_move = goThroughSetsLinear(opp_symbol);
+        var my_combo_move = goThroughSetsCombo(my_symbol);
+        var opp_combo_move = goThroughSetsCombo(opp_symbol);
+
+        if (my_finish_move){
+            this.playMove(my_finish_move);}
+        else if (opp_finish_move){
+            this.playMove(opp_finish_move);}
+        else if (my_combo_move){
+            this.playMove(my_combo_move);}
+        else if (opp_combo_move){
+            this.playMove(opp_combo_move);}
+        else console_log("No combination");
     };
+
 
     this.playMove = function(coords){
         var y = coords[0];
