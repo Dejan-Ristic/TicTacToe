@@ -2,10 +2,8 @@ function BotStart(){
 
     var session_id;
     var player_id;
-
     var is_human = false;
     var my_player;
-
     var my_symbol;
     var opp_symbol;
     var games_played = 0;
@@ -24,26 +22,21 @@ function BotStart(){
         "12": "one_turn",
         "20": "three_turns",
         "21": "two_turns",
-        "22": "two_turns"
-    };
+        "22": "two_turns"};
 
     var transform_methods = {
         "no_transform": {
             "real_table": ["00", "01", "02", "10", "11", "12", "20", "21", "22"],
             "trans_table": ["00", "01", "02", "10", "11", "12", "20", "21", "22"]},
-
         "one_turn": {
             "real_table": ["00", "01", "02", "10", "11", "12", "20", "21", "22"],
             "trans_table": ["20", "10", "00", "21", "11", "01", "22", "12", "02"]},
-
         "two_turns": {
             "real_table": ["00", "01", "02", "10", "11", "12", "20", "21", "22"],
             "trans_table": ["22", "21", "20", "12", "11", "10", "02", "01", "00"]},
-
         "three_turns": {
             "real_table": ["00", "01", "02", "10", "11", "12", "20", "21", "22"],
-            "trans_table": ["02", "12", "22", "01", "11", "21", "00", "10", "20"]}
-    };
+            "trans_table": ["02", "12", "22", "01", "11", "21", "00", "10", "20"]}};
 
     var win_sets = [
         ["00", "01", "02"],
@@ -53,33 +46,25 @@ function BotStart(){
         ["01", "11", "21"],
         ["02", "12", "22"],
         ["00", "11", "22"],
-        ["02", "11", "20"]
-    ];
+        ["02", "11", "20"]];
 
     this.set_session_id = function(ses_id){
         session_id = ses_id;
-        return session_id;
-    };
+        return session_id;};
     this.get_session_id = function(){
-        return session_id ? session_id : null;
-    };
+        return session_id ? session_id : null;};
     this.set_player_id = function(pl_id){
         player_id = pl_id;
-        return player_id;
-    };
+        return player_id;};
     this.get_player_id = function(){
-        return player_id ? player_id : null;
-    };
+        return player_id ? player_id : null;};
     this.set_is_human = function(status){
         is_human = status;
-        return is_human;
-    };
+        return is_human;};
 
     this.pingSession = function(){
         intervalPingSession = setInterval(function(){
-            ApiCalls.sessionStatus();
-        }, 50);
-    };
+            ApiCalls.sessionStatus();}, 50);};
 
     this.waitBothPlayers = function(sess_obj){
         if(sess_obj['player_1'] !== null && sess_obj['player_2'] !== null){
@@ -110,9 +95,7 @@ function BotStart(){
                 clearInterval(intervalPingSession);
                 real_table = sess_obj['current_game']['fields'];
                 move_number += 1;
-                my_symbol === "x" ? this.playAsX() : this.playAsO();
-            }
-        }
+                my_symbol === "x" ? this.playAsX() : this.playAsO();}}
         else {
             clearInterval(intervalPingSession);
             games_played = sess_obj['games'].length;
@@ -131,17 +114,14 @@ function BotStart(){
         }
     };
 
-    this.setTransformationType = function(coords){
-        transformation_type = transform[coords];
-    };
+    this.setTransformationType = function(coords) {
+        transformation_type = transform[coords];};
     this.transformToTransTable = function(coords) {
         var index = transform_methods[transformation_type]['real_table'].indexOf(coords);
-        return transform_methods[transformation_type]['trans_table'][index];
-    };
+        return transform_methods[transformation_type]['trans_table'][index];};
     this.transformToRealTable = function(coords) {
         var index = transform_methods[transformation_type]['trans_table'].indexOf(coords);
-        return transform_methods[transformation_type]['real_table'][index];
-    };
+        return transform_methods[transformation_type]['real_table'][index];};
 
 
 
@@ -165,10 +145,7 @@ function BotStart(){
                     for(x=0; x<3; x++){
                         if (real_table[y][x] === "o"){
                             first_field_opp = this.transformToTransTable(y.toString()+x.toString());
-                            break loop_1;
-                        }
-                    }
-                }
+                            break loop_1;}}}
                 switch (first_field_bot){
                     case "00":
                         switch (first_field_opp){
@@ -191,8 +168,7 @@ function BotStart(){
                                 this.playMove(this.transformToRealTable(ar_2[Math.floor(Math.random()*ar_2.length)]));
                                 break;
                             default:
-                                console.log("Something went very wrong.");
-                        }
+                                console.log("Something went very wrong.");}
                         break;
                     case "01":
                         switch (first_field_opp){
@@ -216,8 +192,7 @@ function BotStart(){
                                 this.playMove(this.transformToRealTable(obj_4[Math.floor(Math.random()*6)]));
                                 break;
                             default:
-                                console.log("Something went very wrong.");
-                        }
+                                console.log("Something went very wrong.");}
                         break;
                     case "11":
                         switch (first_field_opp){
@@ -229,8 +204,7 @@ function BotStart(){
                                     "01": ["22", "20"],
                                     "12": ["20", "00"],
                                     "21": ["00", "02"],
-                                    "10": ["02", "22"]
-                                };
+                                    "10": ["02", "22"]};
                                 this.playMove(this.transformToRealTable(obj_1[first_field_opp][Math.floor(Math.random()*2)]));
                                 break;
                             case "00":
@@ -242,12 +216,10 @@ function BotStart(){
                                 this.playMove(this.transformToRealTable(obj_2[Math.floor(Math.random()*7)]));
                                 break;
                             default:
-                                console.log("Something went very wrong.");
-                        }
+                                console.log("Something went very wrong.");}
                         break;
                     default:
-                        console.log("Something went very wrong.");
-                }
+                        console.log("Something went very wrong.");}
                 break;
             case 3:
             case 4:
@@ -255,21 +227,50 @@ function BotStart(){
                 this.autoPlayMove();
                 break;
             default:
-                console.log("Something went very wrong.");
-        }
-    };
+                console.log("Something went very wrong.");}};
 
 
     this.playAsO = function(){
-        console_log("NOW I AM O !!!!");
+
         //***********************************************************************************
         if (is_human) return;
         //***********************************************************************************
 
-        console_log("nothing to do");
-    };
+        switch (move_number) {
+            case 1:
+                loop_3:
+                for (y=0; y<3; y++) {
+                    for (x=0; x<3; x++) {
+                        if (real_table[y][x] === "x") {
+                            this.setTransformationType(y.toString() + x.toString());
+                            first_field_opp = this.transformToTransTable(y.toString() + x.toString());
+                            break loop_3;}}}
+                switch (first_field_opp){
+                    case "00":
+                        this.playMove(this.transformToRealTable("11"));
+                        break;
+                    case "01":
+
+                        break;
+                    case "11":
+                        break;
+                    default:
+                        console.log("Something went very wrong.");}
+                break;
+            case 2:
+            case 3:
+            case 4:
+                this.autoPlayMove();
+                break;
+            default:
+                console.log("Something went very wrong.");}};
+
+
+
+
 
     this.autoPlayMove = function(){
+
         function goThroughSetsLinear(symbol) {
             var symbol_count = 0;
             var empty_count = 0;
@@ -286,20 +287,14 @@ function BotStart(){
                             empty_coords = win_sets[i][j];
                             break;
                         default:
-                            break;
-                    }
+                            break;}
                     if(j === (win_sets[i].length - 1)){
                         if (symbol_count === 2 && empty_count ===1){
-                            break loop_2;
-                        }
+                            break loop_2;}
                         symbol_count = 0;
                         empty_count = 0;
-                        empty_coords = null;
-                    }
-                }
-            }
-            return empty_coords;
-        }
+                        empty_coords = null;}}}
+            return empty_coords;}
 
         function goThroughSetsCombo(symbol){
             var symbol_count = 0;
@@ -318,19 +313,13 @@ function BotStart(){
                             console_log(empty_coords_list);
                             break;
                         default:
-                            break;
-                    }
+                            break;}
                     if(j === (win_sets[i].length - 1)) {
                         if (!(symbol_count === 1 && empty_count === 2)) {
                             for (count=0; count<empty_count; count++){
-                                empty_coords_list.pop();
-                            }
-                        }
+                                empty_coords_list.pop();}}
                         symbol_count = 0;
-                        empty_count = 0;
-                    }
-                }
-            }
+                        empty_count = 0;}}}
             for (count=0; count<empty_coords_list.length; count++){
                 for (inner_count=count+1; inner_count<empty_coords_list.length; inner_count++){
                     if (empty_coords_list[count] === empty_coords_list[inner_count]){
@@ -341,15 +330,16 @@ function BotStart(){
         var my_combo_move = goThroughSetsCombo(my_symbol);
         var opp_combo_move = goThroughSetsCombo(opp_symbol);
 
-        if (my_finish_move){
-            this.playMove(my_finish_move);}
-        else if (opp_finish_move){
-            this.playMove(opp_finish_move);}
-        else if (my_combo_move){
-            this.playMove(my_combo_move);}
-        else if (opp_combo_move){
-            this.playMove(opp_combo_move);}
-        else console_log("No combination");
+        if (my_finish_move)
+            this.playMove(my_finish_move);
+        else if (opp_finish_move)
+            this.playMove(opp_finish_move);
+        else if (my_combo_move)
+            this.playMove(my_combo_move);
+        else if (opp_combo_move)
+            this.playMove(opp_combo_move);
+        else
+            console_log("No combination");
     };
 
 
@@ -369,7 +359,7 @@ BotStart.init = function(sess_init, is_human, ses_id){
     bot = new BotStart();
     bot.set_player_id(sess_init.player_id);
     bot.set_is_human(is_human);
-    if(ses_id){
+    if (ses_id){
         bot.set_session_id(ses_id);
 
         //***********************************************************************************
@@ -377,7 +367,7 @@ BotStart.init = function(sess_init, is_human, ses_id){
         //***********************************************************************************
 
     }
-    else{
+    else {
         bot.set_session_id(sess_init.session_id);
 
         //***********************************************************************************
@@ -386,6 +376,5 @@ BotStart.init = function(sess_init, is_human, ses_id){
 
     }
     intervalWaitBothPlayers = setInterval(function(){
-        ApiCalls.playersStatus();
-    }, 50);
-};
+        ApiCalls.playersStatus();}, 50);};
+
