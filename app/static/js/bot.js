@@ -1,8 +1,75 @@
+function ApiCalls() {
+}
+ApiCalls.joinGame = function(pl_1_name){
+    $.ajax({
+        url: 'join-game-mode/P/'+pl_1_name,
+        type: "GET",
+        dataType: 'json',
+        contentType: 'application/json',
+        success: joinGameSuccess,
+        error: joinGameError});
+    function joinGameSuccess(response) {
+        BotStart.init(response);}
+    function joinGameError(response) {
+        console.log("Error: "+response);}};
+
+ApiCalls.joinSession = function(ses_id, pl_2_name){
+    $.ajax({
+    url: 'join-session/'+ses_id+'/'+pl_2_name,
+    type: "GET",
+    dataType: 'json',
+    contentType: 'application/json',
+    success: joinSessionSuccess,
+    error: joinSessionError});
+    function joinSessionSuccess(response) {
+        BotStart.init(response, ses_id);}
+    function joinSessionError(response) {
+        console.log("Error: "+response);}};
+
+ApiCalls.sessionStatus = function(){
+    $.ajax({
+        url: 'get-session-state/'+bot.get_session_id(),
+        type: "GET",
+        dataType: 'json',
+        contentType: 'application/json',
+        success: sessionStatusSuccess,
+        error: sessionStatusError});
+    function sessionStatusSuccess(response) {
+        bot.checkMove(response);}
+    function sessionStatusError(response) {
+        console.log("Error: "+response);}};
+
+ApiCalls.playersStatus = function(){
+    $.ajax({
+        url: 'get-session-state/'+bot.get_session_id(),
+        type: "GET",
+        dataType: 'json',
+        contentType: 'application/json',
+        success: playersStatusSuccess,
+        error: playersStatusError});
+    function playersStatusSuccess(response) {
+        bot.waitBothPlayers(response);}
+    function playersStatusError(response) {
+        console.log("Error: "+response);}};
+
+ApiCalls.playMove = function(y, x){
+    $.ajax({
+        url: 'play-move/'+bot.get_session_id()+'/'+bot.get_player_id()+'/'+y+'/'+x,
+        type: "GET",
+        dataType: 'json',
+        contentType: 'application/json',
+        success: playMoveSuccess,
+        error: playMoveError});
+    function playMoveSuccess() {
+        bot.pingSession();}
+    function playMoveError(response) {
+        console.log("Error: "+response);}};
+
+
 function BotStart(){
 
     var session_id;
     var player_id;
-    var is_human = false;
     var my_player;
     var my_symbol;
     var opp_symbol;
@@ -39,6 +106,15 @@ function BotStart(){
             "real_table": ["00", "01", "02", "10", "11", "12", "20", "21", "22"],
             "trans_table": ["02", "12", "22", "01", "11", "21", "00", "10", "20"]}};
 
+    this.setTransformationType = function(coords) {
+        transformation_type = transform[coords];};
+    this.transformToTransTable = function(coords) {
+        var index = transform_methods[transformation_type]['real_table'].indexOf(coords);
+        return transform_methods[transformation_type]['trans_table'][index];};
+    this.transformToRealTable = function(coords) {
+        var index = transform_methods[transformation_type]['trans_table'].indexOf(coords);
+        return transform_methods[transformation_type]['real_table'][index];};
+
     var win_sets = [
         ["00", "01", "02"],
         ["10", "11", "12"],
@@ -59,9 +135,6 @@ function BotStart(){
         return player_id;};
     this.get_player_id = function(){
         return player_id ? player_id : null;};
-    this.set_is_human = function(status){
-        is_human = status;
-        return is_human;};
 
     this.pingSession = function(){
         intervalPingSession = setInterval(function(){
@@ -74,23 +147,14 @@ function BotStart(){
             my_symbol = sess_obj[my_player]['symbol'];
             opp_symbol = (my_player === 'player_1') ? sess_obj['player_2']['symbol'] : sess_obj['player_1']['symbol'];
             this.pingSession();
-
             //***********************************************************************************
-            real_table = sess_obj['current_game']['fields'];
             displayBothPlayersData(sess_obj['player_1']['id'], sess_obj['player_1']['name'],
                                     sess_obj['player_2']['id'], sess_obj['player_2']['name']);
-            displayTable(real_table);
             //***********************************************************************************
         }
     };
 
     this.checkMove = function(sess_obj){
-
-        //***********************************************************************************
-        real_table = sess_obj['current_game']['fields'];
-        displayTable(real_table);
-        //***********************************************************************************
-
         if(!(sess_obj['games'].length > games_played)) {
             if (sess_obj['current_game']['next_symbol'] === my_symbol) {
                 clearInterval(intervalPingSession);
@@ -105,33 +169,14 @@ function BotStart(){
             transformation_type = null;
             move_number = 0;
             this.pingSession();
-
             //***********************************************************************************
-            real_table = sess_obj['current_game']['fields'];
-            displayTable(real_table);
             displayResults(sess_obj['games'].length, sess_obj['player_1']['wins'], sess_obj['draw'],
                             sess_obj['player_2']['wins']);
             //***********************************************************************************
-
         }
     };
 
-    this.setTransformationType = function(coords) {
-        transformation_type = transform[coords];};
-    this.transformToTransTable = function(coords) {
-        var index = transform_methods[transformation_type]['real_table'].indexOf(coords);
-        return transform_methods[transformation_type]['trans_table'][index];};
-    this.transformToRealTable = function(coords) {
-        var index = transform_methods[transformation_type]['trans_table'].indexOf(coords);
-        return transform_methods[transformation_type]['real_table'][index];};
-
-
     this.playAsX = function(){
-
-        //***********************************************************************************
-        if (is_human) return;
-        //***********************************************************************************
-
         switch (move_number){
             case 1:
                 var y_play = (Math.floor(Math.random()*3)).toString();
@@ -234,22 +279,10 @@ function BotStart(){
                 this.autoPlayMove();
                 break;
             default:
-                console_log(move_number);
-                console.log(my_symbol);
-                console_log(first_field_bot);
-                console.log(opp_symbol);
-                console_log(first_field_opp);
-
-
                 console.log("19 Something went very wrong.");}};
 
 
     this.playAsO = function(){
-
-        //***********************************************************************************
-        if (is_human) return;
-        //***********************************************************************************
-
         switch (move_number) {
             case 1:
                 loop_3:
@@ -429,34 +462,22 @@ function BotStart(){
     this.playMove = function(coords){
         var y = coords[0];
         var x = coords[1];
-        ApiCalls.playMove(y, x);
+        ApiCalls.playMove(y, x);};}
 
-        //***********************************************************************************
-        displayTable(real_table);
-        //***********************************************************************************
-
-    };
-}
-
-BotStart.init = function(sess_init, is_human, ses_id){
+BotStart.init = function(sess_init, ses_id){
     bot = new BotStart();
     bot.set_player_id(sess_init.player_id);
-    bot.set_is_human(is_human);
     if (ses_id){
         bot.set_session_id(ses_id);
-
         //***********************************************************************************
         displayInitDataJoinSession(bot.get_session_id(), bot.get_player_id());
         //***********************************************************************************
-
     }
     else {
         bot.set_session_id(sess_init.session_id);
-
         //***********************************************************************************
         displayInitDataNewSession(bot.get_session_id(), bot.get_player_id());
         //***********************************************************************************
-
     }
     intervalWaitBothPlayers = setInterval(function(){
         ApiCalls.playersStatus();}, 500);};
