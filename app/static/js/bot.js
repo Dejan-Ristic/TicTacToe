@@ -14,8 +14,6 @@ function BotStart(){
     var first_field_opp;
     var second_field_opp;
 
-    var testing_game = [];
-
     var transform = {
         "00": "no_transform",
         "01": "no_transform",
@@ -67,7 +65,7 @@ function BotStart(){
 
     this.pingSession = function(){
         intervalPingSession = setInterval(function(){
-            ApiCalls.sessionStatus();}, 50);};
+            ApiCalls.sessionStatus();}, 500);};
 
     this.waitBothPlayers = function(sess_obj){
         if(sess_obj['player_1'] !== null && sess_obj['player_2'] !== null){
@@ -97,29 +95,11 @@ function BotStart(){
             if (sess_obj['current_game']['next_symbol'] === my_symbol) {
                 clearInterval(intervalPingSession);
                 real_table = sess_obj['current_game']['fields'];
-
-
-                testing_game.push(sess_obj['current_game']['fields']);
-
-
                 move_number += 1;
                 my_symbol === "x" ? this.playAsX() : this.playAsO();}}
         else {
             clearInterval(intervalPingSession);
             games_played = sess_obj['games'].length;
-
-
-            if(sess_obj['player_1']['wins']>0 || sess_obj['player_2']['wins']>0){
-                console_log(sess_obj['games']);
-                console_log(testing_game);
-            }
-            else{
-                for (i=0; i<testing_game.length; i++){
-                    testing_game[i].pop();
-                    clearInterval(intervalPingSession);
-                }
-            }
-
             my_symbol = sess_obj[my_player]['symbol'];
             opp_symbol = (my_player === 'player_1') ? sess_obj['player_2']['symbol'] : sess_obj['player_1']['symbol'];
             transformation_type = null;
@@ -146,7 +126,6 @@ function BotStart(){
         return transform_methods[transformation_type]['real_table'][index];};
 
 
-
     this.playAsX = function(){
 
         //***********************************************************************************
@@ -155,9 +134,6 @@ function BotStart(){
 
         switch (move_number){
             case 1:
-                //first_field_bot = null;
-                //first_field_opp = null;
-                //second_field_opp = null;
                 var y_play = (Math.floor(Math.random()*3)).toString();
                 var x_play = (Math.floor(Math.random()*3)).toString();
                 this.setTransformationType(y_play+x_play);
@@ -193,7 +169,7 @@ function BotStart(){
                                 this.playMove(this.transformToRealTable(ar_2[Math.floor(Math.random()*ar_2.length)]));
                                 break;
                             default:
-                                console.log("Something went very wrong.");}
+                                console.log("15 Something went very wrong.");}
                         break;
                     case "01":
                         switch (first_field_opp){
@@ -207,17 +183,23 @@ function BotStart(){
                                 break;
                             case "21":
                                 var obj_3 = ["00", "02", "10", "11", "12", "20", "22"];
-                                this.playMove(this.transformToRealTable(obj_3[Math.floor(Math.random()*7)]));
+                                this.playMove(this.transformToRealTable(obj_3[Math.floor(Math.random()*obj_3.length)]));
                                 break;
                             case "00":
+                                var obj_14 = ["10", "11", "12", "20", "22"];
+                                this.playMove(this.transformToRealTable(obj_14[Math.floor(Math.random()*obj_14.length)]));
+                                break;
                             case "02":
+                                var obj_15 = ["10", "11", "12", "20", "22"];
+                                this.playMove(this.transformToRealTable(obj_15[Math.floor(Math.random()*obj_15.length)]));
+                                break;
                             case "11":
                                 var obj_4 = ["00", "02", "10", "11", "12", "20", "22"];
                                 obj_4.splice((obj_4.indexOf(first_field_opp)), 1);
-                                this.playMove(this.transformToRealTable(obj_4[Math.floor(Math.random()*6)]));
+                                this.playMove(this.transformToRealTable(obj_4[Math.floor(Math.random()*obj_4.length)]));
                                 break;
                             default:
-                                console.log("Something went very wrong.");}
+                                console.log("16 Something went very wrong.");}
                         break;
                     case "11":
                         switch (first_field_opp){
@@ -230,7 +212,7 @@ function BotStart(){
                                     "12": ["20", "00"],
                                     "21": ["00", "02"],
                                     "10": ["02", "22"]};
-                                this.playMove(this.transformToRealTable(obj_1[first_field_opp][Math.floor(Math.random()*2)]));
+                                this.playMove(this.transformToRealTable(obj_1[first_field_opp][Math.floor(Math.random()*obj_1[first_field_opp].length)]));
                                 break;
                             case "00":
                             case "02":
@@ -238,13 +220,13 @@ function BotStart(){
                             case "22":
                                 var obj_2 = ["00", "01", "02", "10", "12", "20", "21", "22"];
                                 obj_2.splice((obj_2.indexOf(first_field_opp)), 1);
-                                this.playMove(this.transformToRealTable(obj_2[Math.floor(Math.random()*7)]));
+                                this.playMove(this.transformToRealTable(obj_2[Math.floor(Math.random()*obj_2.length)]));
                                 break;
                             default:
-                                console.log("Something went very wrong.");}
+                                console.log("17 Something went very wrong.");}
                         break;
                     default:
-                        console.log("Something went very wrong.");}
+                        console.log("18 Something went very wrong.");}
                 break;
             case 3:
             case 4:
@@ -252,7 +234,14 @@ function BotStart(){
                 this.autoPlayMove();
                 break;
             default:
-                console.log("Something went very wrong.");}};
+                console_log(move_number);
+                console.log(my_symbol);
+                console_log(first_field_bot);
+                console.log(opp_symbol);
+                console_log(first_field_opp);
+
+
+                console.log("19 Something went very wrong.");}};
 
 
     this.playAsO = function(){
@@ -263,9 +252,6 @@ function BotStart(){
 
         switch (move_number) {
             case 1:
-                //first_field_bot = null;
-                //first_field_opp = null;
-                //second_field_opp = null;
                 loop_3:
                 for (y=0; y<3; y++) {
                     for (x=0; x<3; x++) {
@@ -280,16 +266,16 @@ function BotStart(){
                         break;
                     case "01":
                         var obj_6 = ["00", "02", "11", "21"];
-                        first_field_bot = obj_6[Math.floor(Math.random()*4)];
+                        first_field_bot = obj_6[Math.floor(Math.random()*obj_6.length)];
                         this.playMove(this.transformToRealTable(first_field_bot));
                         break;
                     case "11":
                         var obj_5 = ["00", "02", "20", "22"];
-                        first_field_bot = obj_5[Math.floor(Math.random()*4)];
+                        first_field_bot = obj_5[Math.floor(Math.random()*obj_5.length)];
                         this.playMove(this.transformToRealTable(first_field_bot));
                         break;
                     default:
-                        console.log("Something went very wrong.");}
+                        console.log("1 Something went very wrong.");}
                 break;
             case 2:
                 loop_4:
@@ -300,182 +286,70 @@ function BotStart(){
                             break loop_4;}}}
                 switch (first_field_opp) {
                     case "00":
-                        switch (second_field_opp){
-                            case "22":
-                                var obj_7 = ["01", "10", "12", "21"];
-                                this.playMove(this.transformToRealTable(obj_7[Math.floor(Math.random()*4)]));
-                                break;
-                            case "01":
-                            case "12":
-                            case "02":
-                            case "10":
-                            case "21":
-                            case "20":
-                                this.autoPlayMove();
-                                break;
-                            default:
-                                console.log("Something went very wrong.");}
+                        if (second_field_opp === "22"){
+                            var obj_7 = ["01", "10", "12", "21"];
+                            this.playMove(this.transformToRealTable(obj_7[Math.floor(Math.random()*obj_7.length)]));}
+                        else {
+                            this.autoPlayMove();}
                         break;
                     case "01":
                         switch (first_field_bot){
                             case "00":
-                                switch (second_field_opp){
-                                    case "02":
-                                        this.playMove(this.transformToRealTable("20"));
-                                        break;
-                                    case "10":
-                                    case "11":
-                                    case "12":
-                                    case "20":
-                                    case "21":
-                                    case "22":
-                                        this.autoPlayMove();
-                                        break;
-                                    default:
-                                        console.log("Something went very wrong.");}
+                                if (second_field_opp === "02"){
+                                    this.playMove(this.transformToRealTable("20"));}
+                                else {
+                                    this.autoPlayMove();}
                                 break;
                             case "02":
-                                switch (second_field_opp){
-                                    case "00":
-                                        this.playMove(this.transformToRealTable("22"));
-                                        break;
-                                    case "10":
-                                    case "11":
-                                    case "12":
-                                    case "20":
-                                    case "21":
-                                    case "22":
-                                        this.autoPlayMove();
-                                        break;
-                                    default:
-                                        console.log("Something went very wrong.");}
+                                if (second_field_opp === "00"){
+                                    this.playMove(this.transformToRealTable("22"));}
+                                else {
+                                    this.autoPlayMove();}
                                 break;
                             case "11":
-                                switch (second_field_opp){
-                                    case "21":
-                                        var obj_8 = ["00", "02", "20", "22"];
-                                        this.playMove(this.transformToRealTable(obj_8[Math.floor(Math.random()*4)]));
-                                        break;
-                                    case "00":
-                                    case "02":
-                                    case "10":
-                                    case "12":
-                                    case "20":
-                                    case "22":
-                                        this.autoPlayMove();
-                                        break;
-                                    default:
-                                        console.log("Something went very wrong.");}
-                                break;
                             case "21":
-                                switch (second_field_opp){
-                                    case "11":
-                                        var obj_9 = ["00", "02", "20", "22"];
-                                        this.playMove(this.transformToRealTable(obj_9[Math.floor(Math.random()*4)]));
-                                        break;
-                                    case "00":
-                                    case "02":
-                                    case "10":
-                                    case "12":
-                                    case "20":
-                                    case "22":
-                                        this.autoPlayMove();
-                                        break;
-                                    default:
-                                        console.log("Something went very wrong.");}
+                                if (second_field_opp === "21" || second_field_opp === "11"){
+                                    var obj_8 = ["00", "02", "20", "22"];
+                                    this.playMove(this.transformToRealTable(obj_8[Math.floor(Math.random()*obj_8.length)]));}
+                                else {
+                                    this.autoPlayMove();}
                                 break;
                             default:
-                                console.log("Something went very wrong.");}
+                                console.log("7 Something went very wrong.");}
                         break;
                     case "11":
                         switch (first_field_bot){
                             case "00":
-                                switch (second_field_opp){
-                                    case "22":
-                                        var obj_10 = ["02", "20"];
-                                        this.playMove(this.transformToRealTable(obj_10[Math.floor(Math.random()*2)]));
-                                        break;
-                                    case "01":
-                                    case "02":
-                                    case "10":
-                                    case "12":
-                                    case "20":
-                                    case "21":
-                                        this.autoPlayMove();
-                                        break;
-                                    default:
-                                        console.log("Something went very wrong.");}
+                            case "22":
+                                if (second_field_opp === "22" || second_field_opp === "00"){
+                                    var obj_10 = ["02", "20"];
+                                    this.playMove(this.transformToRealTable(obj_10[Math.floor(Math.random()*obj_10.length)]));}
+                                else {
+                                    this.autoPlayMove();}
                                 break;
                             case "02":
-                                switch (second_field_opp){
-                                    case "20":
-                                        var obj_11 = ["00", "22"];
-                                        this.playMove(this.transformToRealTable(obj_11[Math.floor(Math.random()*2)]));
-                                        break;
-                                    case "01":
-                                    case "00":
-                                    case "10":
-                                    case "12":
-                                    case "22":
-                                    case "21":
-                                        this.autoPlayMove();
-                                        break;
-                                    default:
-                                        console.log("Something went very wrong.");}
-                                break;
                             case "20":
-                                switch (second_field_opp){
-                                    case "02":
-                                        var obj_12 = ["00", "22"];
-                                        this.playMove(this.transformToRealTable(obj_12[Math.floor(Math.random()*2)]));
-                                        break;
-                                    case "01":
-                                    case "00":
-                                    case "10":
-                                    case "12":
-                                    case "22":
-                                    case "21":
-                                        this.autoPlayMove();
-                                        break;
-                                    default:
-                                        console.log("Something went very wrong.");}
-                                break;
-                            case "22":
-                                switch (second_field_opp){
-                                    case "00":
-                                        var obj_13 = ["02", "20"];
-                                        this.playMove(this.transformToRealTable(obj_13[Math.floor(Math.random()*2)]));
-                                        break;
-                                    case "01":
-                                    case "02":
-                                    case "10":
-                                    case "12":
-                                    case "20":
-                                    case "21":
-                                        this.autoPlayMove();
-                                        break;
-                                    default:
-                                        console.log("Something went very wrong.");}
+                                if (second_field_opp === "20" || second_field_opp === "02"){
+                                    var obj_11 = ["00", "22"];
+                                    this.playMove(this.transformToRealTable(obj_11[Math.floor(Math.random()*obj_11.length)]));}
+                                else {
+                                    this.autoPlayMove();}
                                 break;
                             default:
-                                console.log("Something went very wrong.");}
+                                console.log("12 Something went very wrong.");}
                         break;
                     default:
-                        console.log("Something went very wrong.");}
+                        console.log("13 Something went very wrong.");}
                 break;
             case 3:
             case 4:
                 this.autoPlayMove();
                 break;
             default:
-                console.log("Something went very wrong.");}};
-
-
-
+                console.log("14 Something went very wrong.");}};
 
 
     this.autoPlayMove = function(){
-
         function goThroughSetsLinear(symbol) {
             var symbol_count = 0;
             var empty_count = 0;
@@ -498,8 +372,7 @@ function BotStart(){
                             break loop_2;}
                         symbol_count = 0;
                         empty_count = 0;
-                        empty_coords = null;
-                    }}}
+                        empty_coords = null;}}}
             return empty_coords;}
 
         function goThroughSetsCombo(symbol){
@@ -507,8 +380,6 @@ function BotStart(){
             var empty_count = 0;
             var empty_coords_list = [];
             var empty_coords = null;
-
-
             for (i = 0; i < win_sets.length; i++) {
                 for (j = 0; j < win_sets[i].length; j++) {
                     switch (real_table[win_sets[i][j][0] ] [win_sets[i][j][1] ]){
@@ -531,15 +402,8 @@ function BotStart(){
                 for (count=0; count<empty_coords_list.length; count++){
                     for (inner_count=count+1; inner_count<empty_coords_list.length; inner_count++){
                         if (empty_coords_list[count] === empty_coords_list[inner_count]){
-                            return empty_coords = empty_coords_list[count];
-                        }
-                    }
-                }
-            }
-            else return empty_coords;
-
-
-        }
+                            empty_coords = empty_coords_list[count];}}}}
+            return empty_coords;}
 
         var my_finish_move = goThroughSetsLinear(my_symbol);
         var opp_finish_move = goThroughSetsLinear(opp_symbol);
@@ -548,28 +412,19 @@ function BotStart(){
         var random_fields = [];
 
         if (my_finish_move){
-            console_log("PLAYING LINEAR");
             this.playMove(my_finish_move);}
         else if (opp_finish_move){
-            console_log("PLAYING LINEAR");
             this.playMove(opp_finish_move);}
         else if (my_combo_move){
-            console_log("PLAYING COMBO");
             this.playMove(my_combo_move);}
         else if (opp_combo_move){
-            console_log("PLAYING COMBO");
             this.playMove(opp_combo_move);}
         else {
-            console_log("PLAYING RANDOM !!!!");
             for (y=0; y<3; y++) {
                 for (x=0; x<3; x++) {
                     if (real_table[y][x] === "-"){
                         random_fields.push(y.toString() + x.toString());}}}
-            this.playMove(random_fields[Math.floor(Math.random()*random_fields.length)]);}
-
-
-         };
-
+            this.playMove(random_fields[Math.floor(Math.random()*random_fields.length)]);}};
 
     this.playMove = function(coords){
         var y = coords[0];
@@ -604,5 +459,4 @@ BotStart.init = function(sess_init, is_human, ses_id){
 
     }
     intervalWaitBothPlayers = setInterval(function(){
-        ApiCalls.playersStatus();}, 50);};
-
+        ApiCalls.playersStatus();}, 500);};
